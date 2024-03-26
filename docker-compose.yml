@@ -21,16 +21,11 @@ volumes:
 services:
   app:
     container_name: minimal_sns_app
-# NOTE: for ruby
-#    build: app/ruby
-#    volumes:
-#      - socket:/var/run/unicorn/
-# NOTE: for go
-#    build: app/go
-#    volumes:
-#      - ./app/go:/app
-#    ports:
-#      - "1323:1323"
+    build: app/go
+    volumes:
+      - ./app/go:/app
+    ports:
+      - "1323:1323"
     networks:
       - front
       - back
@@ -42,10 +37,13 @@ services:
     hostname: db
     networks:
       - back
+    ports:
+      - "3306:3306"
     volumes:
       - ./mysql/my.cnf:/etc/mysql/my.cnf
       - ./mysql/conf.d/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
-      - ./mysql/0_init.sql:/docker-entrypoint-initdb.d/0_init.sql
+      - ./mysql/init/:/docker-entrypoint-initdb.d/
+      # - ./mysql/0_init.sql:/docker-entrypoint-initdb.d/0_init.sql
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: yes
       MYSQL_DATABASE: app
